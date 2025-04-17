@@ -1,0 +1,292 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOPYc7Npswopz3sSNJl3rf8",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/JAENED13/estudos-logica-com-python/blob/main/Formatando%20imagens%20com%20python\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from PIL import Image\n",
+        "import numpy as np\n",
+        "\n",
+        "def main():\n",
+        "    # carregar a imagem original\n",
+        "    img = Image.open(r\"/content/ChatGPT Image 9 de abr. de 2025, 07_21_49.png\")\n",
+        "\n",
+        "    # converter a imagem em dados binários. Carregar e exportar em jpg\n",
+        "    img_data = np.array(img)\n",
+        "    binary_data = img_data.tobytes()\n",
+        "\n",
+        "    print(\"\\n\", img_data.shape, \"\\n\")\n",
+        "\n",
+        "    # salvar os dados binários em arquivo\n",
+        "    with open(\"original_img.bin\", \"wb\") as file:\n",
+        "        file.write(binary_data)\n",
+        "\n",
+        "    # Ler os dados novamente (simulando cópia)\n",
+        "    with open(\"original_img.bin\", \"rb\") as file:\n",
+        "        data = bytearray(file.read())\n",
+        "\n",
+        "    # Salvar a cópia para manipulação\n",
+        "    with open(\"copy_img.bin\", \"wb\") as file:\n",
+        "        file.write(data)\n",
+        "\n",
+        "    # Manipulação dos dados - reabrindo a cópia\n",
+        "    with open(\"copy_img.bin\", \"rb\") as file:\n",
+        "        modified_data = np.frombuffer(file.read(), dtype=img_data.dtype)\n",
+        "\n",
+        "    # Reconstruir com as dimensões originais\n",
+        "    modified_data = modified_data.reshape(img_data.shape)\n",
+        "\n",
+        "    # Exemplo de manipulação - inverter a imagem horizontalmente\n",
+        "    modified_data = np.fliplr(modified_data)\n",
+        "\n",
+        "    # Criar e mostrar a imagem manipulada\n",
+        "    modified_img = Image.fromarray(modified_data)\n",
+        "    modified_img.show()\n",
+        "\n",
+        "    # Salvar a imagem manipulada como JPG\n",
+        "    modified_img.save(\"imagem_modificada.jpg\", format=\"JPEG\")\n",
+        "    print(\"✅ Imagem manipulada salva como 'imagem_modificada.jpg'\")\n",
+        "\n",
+        "if __name__ == \"__main__\":\n",
+        "    main()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "n9Huv3oMZyIQ",
+        "outputId": "b47565b5-d49a-4213-b20a-18ef2618c0c2"
+      },
+      "execution_count": 24,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            " (1536, 1024, 3) \n",
+            "\n",
+            "✅ Imagem manipulada salva como 'imagem_modificada.jpg'\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from PIL import Image, ImageOps\n",
+        "import numpy as np\n",
+        "\n",
+        "def main():\n",
+        "    # carregar a imagem original\n",
+        "    img = Image.open(r\"/content/ChatGPT Image 9 de abr. de 2025, 07_21_49.png\")\n",
+        "\n",
+        "    # converter a imagem em dados binários. Carregar e exportar em jpg\n",
+        "    img_data = np.array(img)\n",
+        "    binary_data = img_data.tobytes()\n",
+        "\n",
+        "    print(\"\\n\", img_data.shape, \"\\n\")\n",
+        "\n",
+        "    # salvar os dados binários em arquivo\n",
+        "    with open(\"original_img.bin\", \"wb\") as file:\n",
+        "        file.write(binary_data)\n",
+        "\n",
+        "    # Ler os dados novamente (simulando cópia)\n",
+        "    with open(\"original_img.bin\", \"rb\") as file:\n",
+        "        data = bytearray(file.read())\n",
+        "\n",
+        "    # Salvar a cópia para manipulação\n",
+        "    with open(\"copy_img.bin\", \"wb\") as file:\n",
+        "        file.write(data)\n",
+        "\n",
+        "    # Manipulação dos dados - reabrindo a cópia\n",
+        "    with open(\"copy_img.bin\", \"rb\") as file:\n",
+        "        modified_data = np.frombuffer(file.read(), dtype=img_data.dtype)\n",
+        "\n",
+        "    # Reconstruir com as dimensões originais\n",
+        "    modified_data = modified_data.reshape(img_data.shape)\n",
+        "\n",
+        "    # ----------- EFEITOS DE MANIPULAÇÃO ---------------- #\n",
+        "\n",
+        "    # 1. Espelhamento horizontal\n",
+        "    modified_data = np.fliplr(modified_data)\n",
+        "\n",
+        "    # 2. Inverter cores\n",
+        "    modified_data = 255 - modified_data\n",
+        "\n",
+        "    # 3. Adicionar ruído\n",
+        "    noise = np.random.randint(0, 50, img_data.shape, dtype='uint8')\n",
+        "    modified_data = np.clip(modified_data + noise, 0, 255)\n",
+        "\n",
+        "    # 4. Rotacionar a imagem 90 graus\n",
+        "    modified_data = np.rot90(modified_data)\n",
+        "\n",
+        "    # Criar imagem a partir do array\n",
+        "    modified_img = Image.fromarray(modified_data)\n",
+        "\n",
+        "    # 5. Converter para escala de cinza\n",
+        "    grayscale_img = ImageOps.grayscale(modified_img)\n",
+        "\n",
+        "    # Mostrar ambas: colorida manipulada e em tons de cinza\n",
+        "    modified_img.show(title=\"Imagem Manipulada (Colorida)\")\n",
+        "    grayscale_img.show(title=\"Imagem em Escala de Cinza\")\n",
+        "\n",
+        "    # Salvar as imagens\n",
+        "    modified_img.save(\"imagem_modificada.jpg\", format=\"JPEG\")\n",
+        "    grayscale_img.save(\"imagem_cinza.jpg\", format=\"JPEG\")\n",
+        "    print(\"✅ Imagens salvas como 'imagem_modificada.jpg' e 'imagem_cinza.jpg'\")\n",
+        "\n",
+        "if __name__ == \"__main__\":\n",
+        "    main()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "4d95yFrsdcvv",
+        "outputId": "9f981c4a-fcd8-441e-d835-84d90f25240c"
+      },
+      "execution_count": 25,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            " (1536, 1024, 3) \n",
+            "\n",
+            "✅ Imagens salvas como 'imagem_modificada.jpg' e 'imagem_cinza.jpg'\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from PIL import Image, ImageOps\n",
+        "import numpy as np\n",
+        "import os\n",
+        "\n",
+        "def main():\n",
+        "    # Caminho para salvar as imagens\n",
+        "    pasta_saida = r\"C:\\Users\\jailton.aguiar\\Documents\\Pasta PY\"\n",
+        "\n",
+        "    # Verifica se o diretório existe\n",
+        "    if not os.path.exists(pasta_saida):\n",
+        "        print(f\"❌ A pasta de saída '{pasta_saida}' não existe.\")\n",
+        "        return\n",
+        "\n",
+        "    # Caminho da imagem original (ajuste conforme necessário)\n",
+        "    caminho_imagem = r\"/content/ChatGPT Image 9 de abr. de 2025, 07_21_49.png\"\n",
+        "\n",
+        "    # carregar a imagem original\n",
+        "    img = Image.open(caminho_imagem)\n",
+        "\n",
+        "    # converter a imagem em dados binários\n",
+        "    img_data = np.array(img)\n",
+        "    binary_data = img_data.tobytes()\n",
+        "\n",
+        "    print(\"\\n\", img_data.shape, \"\\n\")\n",
+        "\n",
+        "    # salvar os dados binários em arquivo\n",
+        "    with open(\"original_img.bin\", \"wb\") as file:\n",
+        "        file.write(binary_data)\n",
+        "\n",
+        "    # Ler os dados novamente (simulando cópia)\n",
+        "    with open(\"original_img.bin\", \"rb\") as file:\n",
+        "        data = bytearray(file.read())\n",
+        "\n",
+        "    # Salvar a cópia para manipulação\n",
+        "    with open(\"copy_img.bin\", \"wb\") as file:\n",
+        "        file.write(data)\n",
+        "\n",
+        "    # Manipulação dos dados - reabrindo a cópia\n",
+        "    with open(\"copy_img.bin\", \"rb\") as file:\n",
+        "        modified_data = np.frombuffer(file.read(), dtype=img_data.dtype)\n",
+        "\n",
+        "    # Reconstruir com as dimensões originais\n",
+        "    modified_data = modified_data.reshape(img_data.shape)\n",
+        "\n",
+        "    # ----------- EFEITOS DE MANIPULAÇÃO ---------------- #\n",
+        "\n",
+        "    # 1. Espelhamento horizontal\n",
+        "    modified_data = np.fliplr(modified_data)\n",
+        "\n",
+        "    # 2. Inverter cores\n",
+        "    modified_data = 255 - modified_data\n",
+        "\n",
+        "    # 3. Adicionar ruído\n",
+        "    noise = np.random.randint(0, 50, img_data.shape, dtype='uint8')\n",
+        "    modified_data = np.clip(modified_data + noise, 0, 255)\n",
+        "\n",
+        "    # 4. Rotacionar a imagem 90 graus\n",
+        "    modified_data = np.rot90(modified_data)\n",
+        "\n",
+        "    # Criar imagem a partir do array\n",
+        "    modified_img = Image.fromarray(modified_data)\n",
+        "\n",
+        "    # 5. Converter para escala de cinza\n",
+        "    grayscale_img = ImageOps.grayscale(modified_img)\n",
+        "\n",
+        "    # Mostrar imagens\n",
+        "    modified_img.show(title=\"Imagem Manipulada (Colorida)\")\n",
+        "    grayscale_img.show(title=\"Imagem em Escala de Cinza\")\n",
+        "\n",
+        "    # Caminhos de salvamento\n",
+        "    caminho_img_modificada = os.path.join(pasta_saida, \"imagem_modificada.jpg\")\n",
+        "    caminho_img_cinza = os.path.join(pasta_saida, \"imagem_cinza.jpg\")\n",
+        "\n",
+        "    # Salvar as imagens\n",
+        "    modified_img.save(caminho_img_modificada, format=\"JPEG\")\n",
+        "    grayscale_img.save(caminho_img_cinza, format=\"JPEG\")\n",
+        "\n",
+        "    print(f\"✅ Imagens salvas em:\\n{caminho_img_modificada}\\n{caminho_img_cinza}\")\n",
+        "\n",
+        "if __name__ == \"__main__\":\n",
+        "    main()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Y1butmnmdysj",
+        "outputId": "fd372e03-020f-4d66-8056-b98c00e6db40"
+      },
+      "execution_count": 27,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "❌ A pasta de saída 'C:\\Users\\jailton.aguiar\\Documents\\Pasta PY' não existe.\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
